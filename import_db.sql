@@ -37,8 +37,8 @@ CREATE TABLE replies (
     reply_owner_id INTEGER,
     reply_body TEXT,
 
-    FOREIGN KEY (parent_reply_id) REFERENCES replies(id),
-    FOREIGN KEY (reply_owner_id) REFERENCES users(id)
+    FOREIGN KEY (parent_reply_id) REFERENCES questions(id),
+    FOREIGN KEY (reply_owner_id) REFERENCES users(id)  
 );
 
 CREATE TABLE question_like (
@@ -47,7 +47,7 @@ CREATE TABLE question_like (
     question_id INTEGER,
 
     FOREIGN KEY (username_id) REFERENCES users(id),
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
 INSERT INTO 
@@ -58,20 +58,24 @@ VALUES
     ('Jake', 'Rob');
 
 INSERT INTO
-    questions(title, body,author_id)
+    questions (title, body, author_id)
 VALUES
-    ('Question?', 'zzzzzzxxxxxyyyyyy', (SELECT users_id FROM question_follows WHERE questions_id = questions(id))),
-    ('QQuestion?', 'aaaaaaaaabbbbbbb', (SELECT users_id FROM question_follows WHERE questions_id = questions(id))),
-    ('QQQuestion?', 'bbbbbbbbbwwwwww',(SELECT users_id FROM question_follows WHERE questions_id = questions(id)));
+('QQuestion?', 'aaaaaaaaabbbbbbb', (SELECT id FROM users WHERE fname = 'Jake')),
+('Question?', 'zzzzzzxxxxxyyyyyy', (SELECT id FROM users WHERE fname = 'Tim')),
+('QQQuestion?', 'bbbbbbbbbwwwwww', (SELECT id FROM users WHERE fname = 'John'));
 
 INSERT INTO
-    replies(parent_reply_id, subject_question, reply_owner_id, reply_body)
+    replies (parent_reply_id, subject_question, reply_owner_id, reply_body)
 VALUES
-    ( (SELECT id FROM replies WHERE id = replies(id)), 'theuqisksksskskksksksks', ( ), 'iiwiwtrtrtrtrtrkrk'),
-    ( ( ), 'theweweweweweweweksks', ( ), 'zxzxiwiwiwzxxzxzxzxzxzxk'),
-    ( ( ), 'theuqiskseerererereksks', ( ), 'olplplplpliwiwiiwikkrk');
+    ( (SELECT id FROM questions WHERE title = 'QQuestion?') , 'theuqisksksskskksksksks', (SELECT id FROM users WHERE fname = 'Jake'), 'iiwiwtrtrtrtrtrkrk'),
+    ( (SELECT id FROM questions WHERE title = 'Question?'), 'theweweweweweweweksks', (SELECT id FROM users WHERE fname = 'Tim'), 'zxzxiwiwiwzxxzxzxzxzxzxk'),
+    ( (SELECT id FROM questions WHERE title = 'QQQuestion?'), 'theuqiskseerererereksks', (SELECT id FROM users WHERE fname = 'John'), 'zzzzyyydvfjfnaiank');
 
-
-
+INSERT INTO
+    question_like (username_id, question_id)
+VALUES
+    ( (SELECT id FROM users WHERE fname = 'Jake'), (SELECT id FROM questions WHERE title = 'QQuestion?') ),
+    ( (SELECT id FROM users WHERE fname = 'Tim'), (SELECT id FROM questions WHERE title = 'Question?')),
+    ( (SELECT id FROM users WHERE fname = 'John'), (SELECT id FROM questions WHERE title = 'QQQuestion?'));
 
 
